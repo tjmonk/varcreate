@@ -1,0 +1,73 @@
+{
+	"type":"vars",
+	"version":"1.0",
+	"description":"Configuration Vars",
+	"modified":"30-May-2023",
+	"vars":
+	[
+		{
+			"name":"/SYS/TEST/A",
+			"guid":"0x80000",
+			"type":"uint16",
+			"tags":"sys,test,foo,sys:test",
+			"fmt":"%2d",
+			"value":"10",
+			"shortname":"TestA",
+			"description":"Test value A",
+			"flags":"volatile",
+			"read":"1000,1001",
+			"write":"1000"
+	    },
+		{
+			"name":"/SYS/TEST/B",
+			"guid":"0x80001",
+			"type":"uint32",
+			"fmt":"%02u",
+			"tags":"sys,test,foo,sys:test",
+			"value":"12",
+			"shortname":"TestB",
+			"description":"Test value B",
+			"flags":"volatile",
+			"read":"1000,1001",
+			"write":"1000"
+		},
+		{
+			"name":"/SYS/TEST/C",
+			"guid":"0x80002",
+			"type":"str",
+			"length":"128",
+			"fmt":"%-10s",
+			"tags":"sys,test,foo,sys:test",
+			"value":"This is a test",
+			"shortname":"TestC",
+			"description":"Test value C",
+			"flags":"volatile",
+			"read":"1000,1001",
+			"write":"1000"
+		},
+		{
+			"name":"/SYS/TEST/F",
+			"guid":"0x80002",
+			"type":"float",
+			"fmt":"%0.2f",
+			"tags":"sys,test,foo,sys:test",
+			"value":"23.45",
+			"shortname":"TestF",
+			"description":"Test value F",
+			"flags":"volatile",
+			"read":"1000,1001",
+			"write":"1000"
+		},
+		{
+			"name":"/SYS/TEST/DELAY",
+			"guid":"0x80002",
+			"type":"uint16",
+			"tags":"sys,test,foo,sys:test",
+			"value":"100",
+			"shortname":"Delay",
+			"description":"Delay value",
+			"read":"1000,1001",
+			"write":"1000"
+		}
+	]
+}
