@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(VARCREATE_VERSION 0.1)
+
 project(VARCREATE
-    VERSION 0.1
+    VERSION ${VARCREATE_VERSION}
     DESCRIPTION "Variable Creation Components"
 )
 

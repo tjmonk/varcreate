@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(varcreate
-	VERSION 0.1
+	VERSION ${VARCREATE_VERSION}
 	DESCRIPTION "Variable Creation Interface Library"
 )
 
@@ -17,13 +17,21 @@ set_target_properties( ${PROJECT_NAME} PROPERTIES
 	SOVERSION 1
 )
 
-set(VARCREATE_HEADERS inc/libvarcreate.h)
+set(VARCREATE_HEADERS inc/varcreate/libvarcreate.h)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${VARCREATE_HEADERS}")
 
-target_include_directories( ${PROJECT_NAME} PRIVATE . )
+target_include_directories( ${PROJECT_NAME}
+	PRIVATE
+		.
+	PUBLIC
+		inc
+)
 
-target_include_directories( ${PROJECT_NAME} PUBLIC inc )
+target_link_libraries( ${PROJECT_NAME}
+	PRIVATE
+		varserver
+)
 
 install(TARGETS ${PROJECT_NAME}
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

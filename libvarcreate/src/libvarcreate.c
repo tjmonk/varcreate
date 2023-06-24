@@ -57,7 +57,7 @@ SOFTWARE.
 #include <unistd.h>
 #include <varserver/var.h>
 #include "cJSON.h"
-#include "libvarcreate.h"
+#include <varcreate/libvarcreate.h>
 
 /*============================================================================
         Private definitions
