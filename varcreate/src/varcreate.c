@@ -129,6 +129,14 @@ void main(int argc, char **argv)
 
     if( ProcessOptions( argc, argv, &state ) == EOK )
     {
+        options.prefix = state.prefix;
+        options.instanceID = state.instanceID;
+
+        if ( state.flags != NULL )
+        {
+            (void)VARSERVER_StrToFlags( state.flags, &options.flags );
+        }
+
         if( state.filename != NULL )
         {
             /* get a handle to the VAR server */
@@ -141,7 +149,9 @@ void main(int argc, char **argv)
                                                &options );
                 if( rc != EOK )
                 {
-                    fprintf(stderr,"varcrate: error creating vars:%s\n", strerror(rc));
+                    fprintf( stderr,
+                             "varcrate: error creating vars:%s\n",
+                             strerror(rc));
                 }
             }
 
@@ -195,7 +205,7 @@ static int ProcessOptions( int argc, char *argv[], State *pState )
 
     if( ( argc >= 2 ) && ( pState != NULL ) )
     {
-        while( c = getopt( argc, argv, "vp:i:f:") != -1 )
+        while( ( c = getopt( argc, argv, "vp:i:f:") ) != -1 )
         {
             switch( c )
             {

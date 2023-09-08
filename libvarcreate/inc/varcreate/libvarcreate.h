@@ -32,6 +32,7 @@ SOFTWARE.
 #include <stdbool.h>
 #include <stdint.h>
 #include <varserver/varserver.h>
+#include <varserver/var.h>
 
 /*============================================================================
         Defines
@@ -55,9 +56,8 @@ typedef struct _VarCreateOptions
     /*! instance identifier to use for every variable in the file */
     uint32_t instanceID;
 
-    /*! flags to apply to every variable in the file.
-       flags must be a NUL terminated comma separated string of flag names */
-    char *flags;
+    /*! flags to apply to every variable in the file. */
+    VarFlags flags;
 
     /*! enable verbose logging */
     bool verbose;

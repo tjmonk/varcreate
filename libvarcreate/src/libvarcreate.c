@@ -334,6 +334,8 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
     int rc;
     VarInfo variableInfo;
     int result = EINVAL;
+    char buf[32];
+    VarFlags flags;
 
     JSONHandler handlers[] =
         {
@@ -381,6 +383,20 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
 
             /* move to the next JSON attribute */
             i++;
+        }
+
+        if ( options->flags )
+        {
+            variableInfo.flags |= (options->flags);
+        }
+
+        variableInfo.instanceID = options->instanceID;
+
+        if ( options->prefix != NULL )
+        {
+            /* prepend the variable name with the variable prefix */
+            snprintf(buf, 32, "%s%s", options->prefix, variableInfo.name );
+            strcpy( variableInfo.name, buf );
         }
 
         if( result == EOK )
