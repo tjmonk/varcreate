@@ -29,6 +29,14 @@ set_target_properties( ${PROJECT_NAME}
 		       PROPERTIES OUTPUT_NAME varcreate
 )
 
+target_compile_options( ${PROJECT_NAME}
+	PUBLIC
+	-Wall
+	-Wextra
+	-Wpedantic
+	-Werror
+)
+
 install(TARGETS ${PROJECT_NAME}
 	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )

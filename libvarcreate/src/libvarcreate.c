@@ -198,7 +198,6 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
     size_t filesize;
     cJSON *vardata;
     const char *error_ptr;
-    char *string;
 
     /* read the varcreate file */
     result = varcreate_fnReadFile( filename, &filedata, &filesize );
@@ -276,6 +275,9 @@ static int varcreate_fnProcessVarData( VARSERVER_HANDLE hVarServer,
         desc = cJSON_GetObjectItemCaseSensitive( vardata,
                                                  "description" );
 
+        /* not doing anything with desc right now */
+        (void)desc;
+
         /* get a pointer to the array of variables to be created */
         vars = cJSON_GetObjectItemCaseSensitive( vardata, "vars" );
         if( ( vars != NULL ) &&
@@ -334,8 +336,7 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
     int rc;
     VarInfo variableInfo;
     int result = EINVAL;
-    char buf[32];
-    VarFlags flags;
+    char buf[MAX_NAME_LEN+1];
 
     JSONHandler handlers[] =
         {
@@ -395,14 +396,17 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
         if ( options->prefix != NULL )
         {
             /* prepend the variable name with the variable prefix */
-            snprintf(buf, 32, "%s%s", options->prefix, variableInfo.name );
+            snprintf( buf,
+                      MAX_NAME_LEN+1,
+                      "%s%s",
+                      options->prefix,
+                      variableInfo.name );
             strcpy( variableInfo.name, buf );
         }
 
         if( result == EOK )
         {
             /* create the variable */
-            printf("VARCREATE: Creating variable: %s\n", variableInfo.name);
             result = VARSERVER_CreateVar( hVarServer, &variableInfo );
         }
     }
@@ -441,6 +445,9 @@ static int varcreate_ProcessName( VARSERVER_HANDLE hVarServer,
 {
     int result = EINVAL;
     size_t len;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( name != NULL ) )
@@ -499,7 +506,9 @@ static int varcreate_ProcessDescription( VARSERVER_HANDLE hVarServer,
                                          cJSON *description )
 {
     int result = EINVAL;
-    size_t len;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( description != NULL ) )
@@ -545,8 +554,10 @@ static int varcreate_ProcessType( VARSERVER_HANDLE hVarServer,
                                   cJSON *type )
 {
     int result = EINVAL;
-    size_t len;
     char buf[64];
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( type != NULL ) )
@@ -600,6 +611,9 @@ static int varcreate_ProcessFormat( VARSERVER_HANDLE hVarServer,
 {
     int result = EINVAL;
     size_t len;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( fmt != NULL ) )
@@ -655,8 +669,11 @@ static int varcreate_ProcessLength( VARSERVER_HANDLE hVarServer,
                                     cJSON *length )
 {
     int result = EINVAL;
-    size_t len;
     int base = 0;
+
+    /* hVarServer unused */
+    (void)hVarServer;
+
     if( ( pVarInfo != NULL ) &&
         ( length != NULL ) )
     {
@@ -711,7 +728,6 @@ static int varcreate_ProcessValue( VARSERVER_HANDLE hVarServer,
     size_t len;
     char *pWorkingBuffer;
     size_t workingbufsize;
-
 
     if( ( pVarInfo != NULL ) &&
         ( value != NULL ) )
@@ -774,7 +790,9 @@ static int varcreate_ProcessShortName( VARSERVER_HANDLE hVarServer,
                                        cJSON *shortName )
 {
     int result = EINVAL;
-    size_t len;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( shortName != NULL ) )
@@ -819,7 +837,9 @@ static int varcreate_ProcessGUID( VARSERVER_HANDLE hVarServer,
                                   cJSON *guid )
 {
     int result = EINVAL;
-    size_t len;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( guid != NULL ) )
@@ -866,6 +886,9 @@ static int varcreate_ProcessTags( VARSERVER_HANDLE hVarServer,
 {
     int result = EINVAL;
     size_t len;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( tagspec != NULL ) )
@@ -924,7 +947,9 @@ static int varcreate_ProcessFlags( VARSERVER_HANDLE hVarServer,
                                    cJSON *flags )
 {
     int result = EINVAL;
-    size_t len;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( flags != NULL ) )
@@ -972,7 +997,9 @@ static int varcreate_ProcessReadPermissions( VARSERVER_HANDLE hVarServer,
                                              cJSON *read )
 {
     int result = EINVAL;
-    int i;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( read != NULL ) )
@@ -1022,10 +1049,12 @@ static int varcreate_ProcessWritePermissions( VARSERVER_HANDLE hVarServer,
                                               cJSON *write )
 {
     int result = EINVAL;
-    int i;
+
+    /* hVarServer unused */
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
-        ( read != NULL ) )
+        ( write != NULL ) )
     {
         if( ( cJSON_IsString( write ) ) &&
             ( write->valuestring != NULL ) )
@@ -1073,7 +1102,6 @@ static int varcreate_fnReadFile( char *filename,
                                  size_t *filesize )
 {
     int result = EINVAL;
-    FILE *fp;
     struct stat st;
 
     if( ( filename != NULL ) &&

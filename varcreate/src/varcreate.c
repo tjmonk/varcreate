@@ -120,12 +120,12 @@ static int ProcessOptions( int argc, char *argv[], State *pState );
     @return none
 
 ============================================================================*/
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     State state;
     VarCreateOptions options = {0};
     VARSERVER_HANDLE hVarServer = NULL;
-    int rc;
+    int rc = 1;
 
     if( ProcessOptions( argc, argv, &state ) == EOK )
     {
@@ -158,6 +158,8 @@ void main(int argc, char **argv)
             VARSERVER_Close( hVarServer );
         }
     }
+
+    return rc;
 }
 
 /*==========================================================================*/
