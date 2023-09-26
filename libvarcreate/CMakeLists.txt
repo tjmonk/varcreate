@@ -22,7 +22,7 @@ set(VARCREATE_HEADERS inc/varcreate/libvarcreate.h)
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${VARCREATE_HEADERS}")
 
 target_compile_options( ${PROJECT_NAME}
-	PUBLIC
+	PRIVATE
 	-Wall
 	-Wextra
 	-Wpedantic
