@@ -131,6 +131,7 @@ int main(int argc, char **argv)
     {
         options.prefix = state.prefix;
         options.instanceID = state.instanceID;
+        options.verbose = state.verbose;
 
         if ( state.flags != NULL )
         {
@@ -143,7 +144,11 @@ int main(int argc, char **argv)
             hVarServer = VARSERVER_Open();
             if( hVarServer != NULL )
             {
-                printf("VARCREATE: Creating vars: %s\n", state.filename);
+                if ( state.verbose )
+                {
+                    printf("VARCREATE: Creating vars: %s\n", state.filename);
+                }
+
                 rc = VARCREATE_CreateFromFile( hVarServer,
                                                state.filename,
                                                &options );

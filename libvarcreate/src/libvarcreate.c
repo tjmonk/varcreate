@@ -407,6 +407,11 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
         if( result == EOK )
         {
             /* create the variable */
+            if ( options->verbose )
+            {
+                printf("VARCREATE: Creating variable: %s\n", variableInfo.name);
+            }
+
             result = VARSERVER_CreateVar( hVarServer, &variableInfo );
         }
     }
