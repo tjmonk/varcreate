@@ -1012,10 +1012,11 @@ static int varcreate_ProcessReadPermissions( VARSERVER_HANDLE hVarServer,
         if( ( cJSON_IsString( read ) ) &&
             ( read->valuestring != NULL ) )
         {
+            pVarInfo->permissions.nreads = VARSERVER_MAX_UIDS;
             result = VARSERVER_ParsePermissionSpec(
                                     read->valuestring,
                                     pVarInfo->permissions.read,
-                                    MAX_UIDS );
+                                    &pVarInfo->permissions.nreads );
         }
     }
 
@@ -1064,10 +1065,11 @@ static int varcreate_ProcessWritePermissions( VARSERVER_HANDLE hVarServer,
         if( ( cJSON_IsString( write ) ) &&
             ( write->valuestring != NULL ) )
         {
+            pVarInfo->permissions.nwrites = VARSERVER_MAX_UIDS;
             result = VARSERVER_ParsePermissionSpec(
                                     write->valuestring,
                                     pVarInfo->permissions.write,
-                                    MAX_UIDS );
+                                    &pVarInfo->permissions.nwrites );
         }
     }
 
