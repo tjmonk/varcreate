@@ -1,0 +1,34 @@
+{
+	"type":"vars",
+	"version":"1.0",
+	"description":"Configuration Vars",
+	"modified":"18-Oct-2023",
+	"vars":
+	[
+		{
+			"name":"/SYS/TEST/X",
+			"guid":"0x80000",
+			"type":"uint32",
+			"tags":"sys,test,foo,sys:test",
+			"fmt":"0x%X",
+			"value":"0xdeadbeef",
+			"shortname":"TestX",
+			"description":"Test value X",
+			"flags":"volatile",
+			"read":"1000,1001",
+			"write":"1000"
+	    },
+		{
+			"name":"/SYS/TEST/Y",
+			"guid":"0x80001",
+			"type":"uint32",
+			"tags":"sys,test,foo,sys:test",
+			"value":"123456",
+			"shortname":"TestY",
+			"description":"Test value Y",
+			"flags":"volatile",
+			"read":"1000,1001",
+			"write":"1000"
+		}
+	]
+}

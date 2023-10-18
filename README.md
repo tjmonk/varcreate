@@ -118,6 +118,8 @@ Note that some of these attributes are not fully implemented in the variable ser
 
 ## Test
 
+### Creating variables from a single file
+
 Start the varserver if it is not already running
 
 ```
@@ -136,6 +138,27 @@ Show the created variables and their values
 vars -v
 ```
 
+### Create Variables from all files in a directory
+
+Start the varserver if it is not already running
+
+```
+varserver &
+```
+
+Create variables from the test configuration directory
+
+```
+varcreate -d -v varcreate/test
+```
+
+Show the created variables and their values
+
+```
+vars -v
+```
+
+Alternatively, the varcreate utility can create multiple
 ## Acknowledgements
 
 The libvarcreate library utilizes the cJSON source from Dave Gamble ( https://github.com/DaveGamble/cJSON )
