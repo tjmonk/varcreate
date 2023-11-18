@@ -6,6 +6,16 @@
 	"vars":
 	[
 		{
+			"name":"/sys/test/trigger",
+			"type":"uint32",
+			"tags":"sys,test,trigger",
+			"shortname":"triggervar",
+			"description":"Trigger test variable",
+			"flags":"trigger",
+			"read":"1000,1001",
+			"write":"1000"
+	    },
+		{
 			"name":"/SYS/TEST/X",
 			"guid":"0x80000",
 			"type":"uint32",
@@ -14,7 +24,7 @@
 			"value":"0xdeadbeef",
 			"shortname":"TestX",
 			"description":"Test value X",
-			"flags":"volatile",
+			"flags":"",
 			"read":"1000,1001",
 			"write":"1000"
 	    },

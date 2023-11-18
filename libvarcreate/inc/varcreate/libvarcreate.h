@@ -57,7 +57,7 @@ typedef struct _VarCreateOptions
     uint32_t instanceID;
 
     /*! flags to apply to every variable in the file. */
-    VarFlags flags;
+    uint32_t flags;
 
     /*! enable verbose logging */
     bool verbose;
