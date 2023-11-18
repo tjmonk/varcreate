@@ -52,6 +52,7 @@ SOFTWARE.
 #include <errno.h>
 #include <ctype.h>
 #include <string.h>
+#include <inttypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -964,6 +965,17 @@ static int varcreate_ProcessFlags( VARSERVER_HANDLE hVarServer,
         {
             result = VARSERVER_StrToFlags( flags->valuestring,
                                            &pVarInfo->flags );
+            if ( result != EOK )
+            {
+                fprintf(stderr,
+                        "Failed to convert flag string: %s, "
+                        "flag value: %" PRIu32 ", "
+                        "result: %d %s\n",
+                        flags->valuestring,
+                        pVarInfo->flags,
+                        result,
+                        strerror( result ) );
+            }
         }
     }
 
