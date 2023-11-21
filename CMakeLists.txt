@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(VARCREATE_VERSION 0.1)
+set(VARCREATE_VERSION 0.9)
 
 project(VARCREATE
     VERSION ${VARCREATE_VERSION}
