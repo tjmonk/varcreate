@@ -23,10 +23,11 @@ The varcreate configuration file consists of an array of JSON objects where each
 - short name
 - description
 - flags
+- alias
 - read/write permissions
 - length ( for string variables )
 
-Note that some of these attributes are not fully implemented in the variable server at this time.  The minimum required set of attributes is:
+The minimum required set of attributes is:
 
 - name
 - type
@@ -109,6 +110,28 @@ Note that some of these attributes are not fully implemented in the variable ser
 }
 
 ```
+
+## Aliasing
+
+Aliasing refers to the creation of one or more variables which are alternate
+names for an existing variable.
+
+The alias attribute can either be a string,
+
+e.g. "alias" : "varname"
+
+or an array of strings in the case where more than one alias is required
+
+e.g. "alias" : ["varname1","varname2","varname3"]
+
+Aliases are created after the primary variable has been created.
+
+Aliases are first class citizens and indistinguishable in behavior from the
+variable they are aliasing.  You can even create aliases of aliases if you
+desire.
+
+Aliased variables (and their aliases) automatically have the "alias" flag
+assigned to them.
 
 ## Build
 
