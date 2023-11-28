@@ -27,6 +27,7 @@
 			"value":"12",
 			"shortname":"TestB",
 			"description":"Test value B",
+			"alias" : ["b","testb"],
 			"flags":"volatile",
 			"read":"1000,1001",
 			"write":"1000"
@@ -65,6 +66,7 @@
 			"tags":"sys,test,sys:test,timing",
 			"value":"100",
 			"shortname":"Delay",
+			"alias":"delay",
 			"description":"Delay value",
 			"read":"1000,1001",
 			"write":"1000"

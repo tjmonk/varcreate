@@ -1,4 +1,4 @@
-/*============================================================================
+/*==============================================================================
 MIT License
 
 Copyright (c) 2023 Trevor Monk
@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-============================================================================*/
+==============================================================================*/
 
 /*!
  * @defgroup libvarcreate libvarcreate
@@ -28,7 +28,7 @@ SOFTWARE.
  * @{
  */
 
-/*==========================================================================*/
+/*============================================================================*/
 /*!
 @file libvarcreate.c
 
@@ -40,12 +40,12 @@ SOFTWARE.
     Each Variable is created via a call to the variable server API
 
 */
-/*==========================================================================*/
+/*============================================================================*/
 
 
-/*============================================================================
+/*==============================================================================
         Includes
-============================================================================*/
+==============================================================================*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,16 +60,16 @@ SOFTWARE.
 #include "cJSON.h"
 #include <varcreate/libvarcreate.h>
 
-/*============================================================================
+/*==============================================================================
         Private definitions
-============================================================================*/
+==============================================================================*/
 
 /*! specifies the maximum allowable file size of varcreate files */
 #define MAX_VARCREATE_FILE_SIZE               ( 256 * 1024 )
 
-/*============================================================================
+/*==============================================================================
         Type Definitions
-============================================================================*/
+==============================================================================*/
 
 /*! handler for the JSON variable attributes */
 typedef struct _JSONHandler
@@ -82,9 +82,9 @@ typedef struct _JSONHandler
 
 } JSONHandler;
 
-/*============================================================================
+/*==============================================================================
         Private function declarations
-============================================================================*/
+==============================================================================*/
 static int varcreate_fnReadFile( char *filename,
                                  char** filedata,
                                  size_t *filesize );
@@ -141,6 +141,10 @@ static int varcreate_ProcessFlags( VARSERVER_HANDLE hVarServer,
                                    VarInfo *pVarInfo,
                                    cJSON *flags );
 
+static int varcreate_ProcessAlias( VARSERVER_HANDLE hVarServer,
+                                   VarInfo *pVarInfo,
+                                   cJSON *alias );
+
 static int varcreate_ProcessDescription( VARSERVER_HANDLE hVarServer,
                                          VarInfo *pVarInfo,
                                          cJSON *description );
@@ -149,9 +153,9 @@ static int varcreate_ProcessShortName( VARSERVER_HANDLE hVarServer,
                                        VarInfo *pVarInfo,
                                        cJSON *shortName );
 
-/*============================================================================
+/*==============================================================================
         Function definitions
-============================================================================*/
+==============================================================================*/
 
 void __attribute__ ((constructor)) initLibrary(void) {
  //
@@ -164,8 +168,8 @@ void __attribute__ ((destructor)) cleanUpLibrary(void) {
  //
 }
 
-/*==========================================================================*/
-/*  VARCREATE_CreateFromFile                                                */
+/*============================================================================*/
+/*  VARCREATE_CreateFromFile                                                  */
 /*!
     Create variables from a JSON config file
 
@@ -189,7 +193,7 @@ void __attribute__ ((destructor)) cleanUpLibrary(void) {
     @retval EINVAL - invalid arguments
     @retval ENOMEM - memory allocation problem
 
-============================================================================*/
+==============================================================================*/
 int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
                               char *filename,
                               VarCreateOptions *options )
@@ -232,8 +236,8 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_fnProcessVarData                                              */
+/*============================================================================*/
+/*  varcreate_fnProcessVarData                                                */
 /*!
     Process the variables specified in the varcreate JSON
 
@@ -258,7 +262,7 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
     @retval EINVAL - invalid arguments
     @retval ENOMEM - memory allocation problem
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_fnProcessVarData( VARSERVER_HANDLE hVarServer,
                                        cJSON *vardata,
                                        VarCreateOptions *options )
@@ -303,8 +307,8 @@ static int varcreate_fnProcessVarData( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_fnProcessVar                                                  */
+/*============================================================================*/
+/*  varcreate_fnProcessVar                                                    */
 /*!
     Process a variable specified in the varcreate JSON
 
@@ -327,7 +331,7 @@ static int varcreate_fnProcessVarData( VARSERVER_HANDLE hVarServer,
     @retval EINVAL - invalid arguments
     @retval ENOMEM - memory allocation problem
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
                                    const cJSON *vardata,
                                    VarCreateOptions *options )
@@ -414,14 +418,29 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
             }
 
             result = VARSERVER_CreateVar( hVarServer, &variableInfo );
+            if ( ( result == EOK ) && ( variableInfo.hVar != VAR_INVALID ) )
+            {
+                /* check for aliases */
+                item = cJSON_GetObjectItem( vardata, "alias" );
+                if ( item != NULL )
+                {
+                    result = varcreate_ProcessAlias( hVarServer,
+                                                     &variableInfo,
+                                                     item );
+                    if ( result != EOK )
+                    {
+                        printf("Failed handler: alias\n" );
+                    }
+                }
+            }
         }
     }
 
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessName                                                   */
+/*============================================================================*/
+/*  varcreate_ProcessName                                                     */
 /*!
     Process a variable name from the varcreate JSON object
 
@@ -444,7 +463,7 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
     @retval E2BIG - the variable name was too long
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessName( VARSERVER_HANDLE hVarServer,
                                   VarInfo *pVarInfo,
                                   cJSON *name )
@@ -481,8 +500,8 @@ static int varcreate_ProcessName( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessDescription                                            */
+/*============================================================================*/
+/*  varcreate_ProcessDescription                                              */
 /*!
     Process a variable description from the varcreate JSON object
 
@@ -506,7 +525,7 @@ static int varcreate_ProcessName( VARSERVER_HANDLE hVarServer,
     @retval E2BIG - the variable description was too long
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessDescription( VARSERVER_HANDLE hVarServer,
                                          VarInfo *pVarInfo,
                                          cJSON *description )
@@ -529,8 +548,8 @@ static int varcreate_ProcessDescription( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessType                                                   */
+/*============================================================================*/
+/*  varcreate_ProcessType                                                     */
 /*!
     Process a variable type from the varcreate JSON object
 
@@ -554,7 +573,7 @@ static int varcreate_ProcessDescription( VARSERVER_HANDLE hVarServer,
     @retval ENOTSUP - the variable type is not supported
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessType( VARSERVER_HANDLE hVarServer,
                                   VarInfo *pVarInfo,
                                   cJSON *type )
@@ -585,8 +604,8 @@ static int varcreate_ProcessType( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessFormat                                                 */
+/*============================================================================*/
+/*  varcreate_ProcessFormat                                                   */
 /*!
     Process a variable format specifier from the varcreate JSON object
 
@@ -610,7 +629,7 @@ static int varcreate_ProcessType( VARSERVER_HANDLE hVarServer,
     @retval E2BIG - the format specifier exceeds the maximum size
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessFormat( VARSERVER_HANDLE hVarServer,
                                     VarInfo *pVarInfo,
                                     cJSON *fmt )
@@ -644,8 +663,8 @@ static int varcreate_ProcessFormat( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessLength                                                 */
+/*============================================================================*/
+/*  varcreate_ProcessLength                                                   */
 /*!
     Process a variable length specifier from the varcreate JSON object
 
@@ -669,7 +688,7 @@ static int varcreate_ProcessFormat( VARSERVER_HANDLE hVarServer,
     @retval E2BIG - the length specifier exceeds the maximum size
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessLength( VARSERVER_HANDLE hVarServer,
                                     VarInfo *pVarInfo,
                                     cJSON *length )
@@ -700,8 +719,8 @@ static int varcreate_ProcessLength( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessValue                                                  */
+/*============================================================================*/
+/*  varcreate_ProcessValue                                                    */
 /*!
     Process a variable value from the varcreate JSON object
 
@@ -725,7 +744,7 @@ static int varcreate_ProcessLength( VARSERVER_HANDLE hVarServer,
     @retval ENOTSUP - the variable value is not supported
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessValue( VARSERVER_HANDLE hVarServer,
                                    VarInfo *pVarInfo,
                                    cJSON *value )
@@ -765,8 +784,8 @@ static int varcreate_ProcessValue( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessShortName                                              */
+/*============================================================================*/
+/*  varcreate_ProcessShortName                                                */
 /*!
     Process a variable short name from the varcreate JSON object
 
@@ -790,7 +809,7 @@ static int varcreate_ProcessValue( VARSERVER_HANDLE hVarServer,
     @retval E2BIG - the variable short name was too long
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessShortName( VARSERVER_HANDLE hVarServer,
                                        VarInfo *pVarInfo,
                                        cJSON *shortName )
@@ -813,8 +832,8 @@ static int varcreate_ProcessShortName( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessGUID                                                   */
+/*============================================================================*/
+/*  varcreate_ProcessGUID                                                     */
 /*!
     Process a variable GUID from the varcreate JSON object
 
@@ -837,7 +856,7 @@ static int varcreate_ProcessShortName( VARSERVER_HANDLE hVarServer,
     @retval EOK - variable GUID was processed successfully
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessGUID( VARSERVER_HANDLE hVarServer,
                                   VarInfo *pVarInfo,
                                   cJSON *guid )
@@ -861,8 +880,8 @@ static int varcreate_ProcessGUID( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessTags                                                   */
+/*============================================================================*/
+/*  varcreate_ProcessTags                                                     */
 /*!
     Process variable tags from the varcreate JSON object
 
@@ -885,7 +904,7 @@ static int varcreate_ProcessGUID( VARSERVER_HANDLE hVarServer,
     @retval E2BIG - the variable tags were too long
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessTags( VARSERVER_HANDLE hVarServer,
                                   VarInfo *pVarInfo,
                                   cJSON *tagspec )
@@ -922,8 +941,8 @@ static int varcreate_ProcessTags( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessFlags                                                  */
+/*============================================================================*/
+/*  varcreate_ProcessFlags                                                    */
 /*!
     Process variable flags from the varcreate JSON object
 
@@ -947,7 +966,7 @@ static int varcreate_ProcessTags( VARSERVER_HANDLE hVarServer,
     @retval EINVAL - invalid arguments
     @retval ENOENT - one or more flag names were invalid
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessFlags( VARSERVER_HANDLE hVarServer,
                                    VarInfo *pVarInfo,
                                    cJSON *flags )
@@ -982,8 +1001,82 @@ static int varcreate_ProcessFlags( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessReadPermissions                                        */
+/*============================================================================*/
+/*  varcreate_ProcessAlias                                                    */
+/*!
+    Process variable aliases from the varcreate JSON object
+
+    The varcreate_fnProcessAlias function processes the variable
+    aliases from the varcreate JSON object
+
+    @param[in]
+        hVarServer
+            handle to the Variable Server to create variables for
+
+    @param[in]
+        pVarInfo
+            pointer to the VarInfo object where the flags will be stored
+
+    @param[in]
+        aliases
+            pointer to the cJSON object attribute 'alias' to be processed
+
+    @retval EOK - variable flags were parsed successfully
+    @retval E2BIG - the variable flags were too long
+    @retval EINVAL - invalid arguments
+    @retval ENOENT - one or more flag names were invalid
+
+==============================================================================*/
+static int varcreate_ProcessAlias( VARSERVER_HANDLE hVarServer,
+                                   VarInfo *pVarInfo,
+                                   cJSON *alias )
+{
+    int result = EINVAL;
+    int n;
+    int i;
+    cJSON *item;
+    VAR_HANDLE hVar;
+    int rc;
+
+    /* hVarServer unused */
+    (void)hVarServer;
+
+    if( ( pVarInfo != NULL ) &&
+        ( alias != NULL ) )
+    {
+        hVar = pVarInfo->hVar;
+
+        if( ( cJSON_IsString( alias ) ) &&
+            ( alias->valuestring != NULL ) )
+        {
+            result = VAR_Alias( hVarServer, hVar, alias->valuestring, NULL );
+        }
+        else if ( cJSON_IsArray( alias ) )
+        {
+            n = cJSON_GetArraySize( alias );
+            for ( i = 0 ; i < n ; i ++ )
+            {
+                result = EOK;
+
+                item = cJSON_GetArrayItem( alias, i );
+                if ( ( item != NULL ) &&
+                     ( item->valuestring != NULL ) )
+                {
+                    rc = VAR_Alias( hVarServer, hVar, item->valuestring, NULL );
+                    if ( rc != EOK )
+                    {
+                        result = rc;
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+/*============================================================================*/
+/*  varcreate_ProcessReadPermissions                                          */
 /*!
     Process a variable read permissions from the varcreate JSON object
 
@@ -1008,7 +1101,7 @@ static int varcreate_ProcessFlags( VARSERVER_HANDLE hVarServer,
     @retval E2BIG - permissions list is too long
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessReadPermissions( VARSERVER_HANDLE hVarServer,
                                              VarInfo *pVarInfo,
                                              cJSON *read )
@@ -1035,8 +1128,8 @@ static int varcreate_ProcessReadPermissions( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_ProcessWritePermissions                                       */
+/*============================================================================*/
+/*  varcreate_ProcessWritePermissions                                         */
 /*!
     Process a variable write permissions from the varcreate JSON object
 
@@ -1061,7 +1154,7 @@ static int varcreate_ProcessReadPermissions( VARSERVER_HANDLE hVarServer,
     @retval E2BIG - permissions list is too long
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_ProcessWritePermissions( VARSERVER_HANDLE hVarServer,
                                               VarInfo *pVarInfo,
                                               cJSON *write )
@@ -1088,8 +1181,8 @@ static int varcreate_ProcessWritePermissions( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_fnReadFile                                                    */
+/*============================================================================*/
+/*  varcreate_fnReadFile                                                      */
 /*!
     read a file into a buffer
 
@@ -1115,7 +1208,7 @@ static int varcreate_ProcessWritePermissions( VARSERVER_HANDLE hVarServer,
     @retval ENOTSUP - cannot read this file type
     @retval ENOENT - unable to stat or open the file
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_fnReadFile( char *filename,
                                  char** filedata,
                                  size_t *filesize )
@@ -1160,8 +1253,8 @@ static int varcreate_fnReadFile( char *filename,
     return result;
 }
 
-/*==========================================================================*/
-/*  varcreate_fnGetFileData                                                 */
+/*============================================================================*/
+/*  varcreate_fnGetFileData                                                   */
 /*!
     read a file into a buffer
 
@@ -1188,7 +1281,7 @@ static int varcreate_fnReadFile( char *filename,
     @retval ENOENT - unable to open the file for reading
     @retval EIO - read operation failed
 
-============================================================================*/
+==============================================================================*/
 static int varcreate_fnGetFileData( char *filename,
                                     char **filedata,
                                     size_t filesize )
