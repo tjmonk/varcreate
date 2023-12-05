@@ -72,4 +72,8 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
                               char *filename,
                               VarCreateOptions *options );
 
+int VARCREATE_CreateFromString( VARSERVER_HANDLE hVarServer,
+                              const char *filedata,
+                              VarCreateOptions *options );
+
 #endif
