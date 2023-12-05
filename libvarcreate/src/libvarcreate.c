@@ -262,6 +262,7 @@ int VARCREATE_CreateFromString( VARSERVER_HANDLE hVarServer,
         {
             /* indicate the error to the user */
             fprintf(stderr, "Error before: %s\n", error_ptr );
+            result = EBADMSG;
         }
     }
 
