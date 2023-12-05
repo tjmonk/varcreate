@@ -203,7 +203,7 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
     if( result == EOK )
     {
         /* parse the JSON data read from the file */
-        return VARCREATE_CreateFromString(hVarServer, filedata, options);
+        result = VARCREATE_CreateFromString(hVarServer, filedata, options);
     }
 
     return result;
@@ -232,12 +232,11 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
 
     @retval EOK - variable creation was successful
     @retval EINVAL - invalid arguments
-    @retval ENOMEM - memory allocation problem
 
 ============================================================================*/
 int VARCREATE_CreateFromString( VARSERVER_HANDLE hVarServer,
-                              const char *filedata,
-                              VarCreateOptions *options )
+                                const char *filedata,
+                                VarCreateOptions *options )
 {
     int result = EINVAL;
     cJSON *vardata;
