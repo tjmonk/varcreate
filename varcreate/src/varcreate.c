@@ -178,8 +178,7 @@ int main(int argc, char **argv)
                 if( rc != EOK )
                 {
                     fprintf( stderr,
-                             "varcrate: error creating vars:%s\n",
-                             strerror(rc));
+                             "varcreate: error creating vars\n" );
                 }
             }
 
@@ -187,7 +186,7 @@ int main(int argc, char **argv)
         }
     }
 
-    return rc;
+    return rc == 0 ? 0 : 1;
 }
 
 /*============================================================================*/

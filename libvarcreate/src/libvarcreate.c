@@ -213,13 +213,10 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
         if( vardata != NULL )
         {
             /* process the variable data */
-            varcreate_fnProcessVarData( hVarServer, vardata, options );
+            result = varcreate_fnProcessVarData( hVarServer, vardata, options );
 
             /* delete the vardata JSON object now that we are done with it */
             cJSON_Delete( vardata );
-
-            /* indicate success */
-            result = EOK;
         }
         else
         {
@@ -342,6 +339,7 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
     VarInfo variableInfo;
     int result = EINVAL;
     char buf[MAX_NAME_LEN+1];
+    size_t len;
 
     JSONHandler handlers[] =
         {
@@ -396,6 +394,23 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
             variableInfo.flags |= (options->flags);
         }
 
+        if ( ( variableInfo.var.type == VARTYPE_STR ) &&
+             ( variableInfo.var.len > 0 ) )
+        {
+            /* increment the length by 1 to account for the NUL terminator */
+            variableInfo.var.len++;
+
+            if ( variableInfo.var.val.str != NULL )
+            {
+                len = strlen( variableInfo.var.val.str );
+                if ( len >= variableInfo.var.len )
+                {
+                    printf( "Value too large for variable: %s\n",
+                            variableInfo.name );
+                }
+            }
+        }
+
         variableInfo.instanceID = options->instanceID;
 
         if ( options->prefix != NULL )
@@ -418,6 +433,7 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
             }
 
             result = VARSERVER_CreateVar( hVarServer, &variableInfo );
+            printf("result=%d\n",result);
             if ( ( result == EOK ) && ( variableInfo.hVar != VAR_INVALID ) )
             {
                 /* check for aliases */
@@ -432,6 +448,10 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
                         printf("Failed handler: alias\n" );
                     }
                 }
+            }
+            else
+            {
+                printf("Failed to create variable: %s\n", variableInfo.name );
             }
         }
     }
@@ -750,9 +770,8 @@ static int varcreate_ProcessValue( VARSERVER_HANDLE hVarServer,
                                    cJSON *value )
 {
     int result = EINVAL;
-    size_t len;
-    char *pWorkingBuffer;
-    size_t workingbufsize;
+
+    (void)hVarServer;
 
     if( ( pVarInfo != NULL ) &&
         ( value != NULL ) )
@@ -760,24 +779,18 @@ static int varcreate_ProcessValue( VARSERVER_HANDLE hVarServer,
         if( ( cJSON_IsString( value ) ) &&
             ( value->valuestring != NULL ) )
         {
-            len = strlen( value->valuestring );
-
             if( pVarInfo->var.type == VARTYPE_STR )
             {
-                /* get a pointer to the buffer to store the string */
-                result = VARSERVER_GetWorkingBuffer( hVarServer,
-                                                     &pWorkingBuffer,
-                                                     &workingbufsize );
-                if( ( result == EOK ) &&
-                    ( len < workingbufsize ) &&
-                    ( len < pVarInfo->var.len ) )
-                {
-                    pVarInfo->var.val.str = pWorkingBuffer;
-                }
-            }
+                /* store the value to set */
+                pVarInfo->var.val.str = value->valuestring;
 
-            result = VARSERVER_ParseValueString( &pVarInfo->var,
-                                                 value->valuestring );
+                result = EOK;
+            }
+            else
+            {
+                result = VARSERVER_ParseValueString( &pVarInfo->var,
+                                                     value->valuestring );
+            }
         }
     }
 
