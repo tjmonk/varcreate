@@ -201,32 +201,72 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
     int result = EINVAL;
     char *filedata;
     size_t filesize;
-    cJSON *vardata;
-    const char *error_ptr;
 
     /* read the varcreate file */
     result = varcreate_fnReadFile( filename, &filedata, &filesize );
     if( result == EOK )
     {
         /* parse the JSON data read from the file */
-        vardata = cJSON_Parse( filedata );
-        if( vardata != NULL )
-        {
-            /* process the variable data */
-            result = varcreate_fnProcessVarData( hVarServer, vardata, options );
+        result = VARCREATE_CreateFromString(hVarServer, filedata, options);
+    }
 
-            /* delete the vardata JSON object now that we are done with it */
-            cJSON_Delete( vardata );
-        }
-        else
+    return result;
+}
+
+/*==========================================================================*/
+/*  VARCREATE_CreateFromString                                              */
+/*!
+    Create variables from a string containing JSON configuration
+
+    The VARCREATE_CreateFromString function dynamically creates varserver
+    variables at run-time by parsing a JSON configuration string.
+
+    @param[in]
+        hVarServer
+            handle to the Variable Server to create variables for
+
+    @param[in]
+        filedata
+            string containing variable creation JSON config data
+
+    @param[in]
+        options
+            pointer to the options used to modify the variable creation
+            behavior.
+
+    @retval EOK - variable creation was successful
+    @retval EINVAL - invalid arguments
+
+============================================================================*/
+int VARCREATE_CreateFromString( VARSERVER_HANDLE hVarServer,
+                                const char *filedata,
+                                VarCreateOptions *options )
+{
+    int result = EINVAL;
+    cJSON *vardata;
+    const char *error_ptr;
+
+    vardata = cJSON_Parse( filedata );
+    if( vardata != NULL )
+    {
+        /* process the variable data */
+        varcreate_fnProcessVarData( hVarServer, vardata, options );
+
+        /* delete the vardata JSON object now that we are done with it */
+        cJSON_Delete( vardata );
+
+        /* indicate success */
+        result = EOK;
+    }
+    else
+    {
+        /* parsing failed, find out where */
+        error_ptr = cJSON_GetErrorPtr();
+        if( error_ptr != NULL )
         {
-            /* parsing failed, find out where */
-            error_ptr = cJSON_GetErrorPtr();
-            if( error_ptr != NULL )
-            {
-                /* indicate the error to the user */
-                fprintf(stderr, "Error before: %s\n", error_ptr );
-            }
+            /* indicate the error to the user */
+            fprintf(stderr, "Error before: %s\n", error_ptr );
+            result = EBADMSG;
         }
     }
 
