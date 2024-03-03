@@ -473,7 +473,6 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
             }
 
             result = VARSERVER_CreateVar( hVarServer, &variableInfo );
-            printf("result=%d\n",result);
             if ( ( result == EOK ) && ( variableInfo.hVar != VAR_INVALID ) )
             {
                 /* check for aliases */
@@ -828,8 +827,10 @@ static int varcreate_ProcessValue( VARSERVER_HANDLE hVarServer,
             }
             else
             {
-                result = VARSERVER_ParseValueString( &pVarInfo->var,
-                                                     value->valuestring );
+                result = VAROBJECT_CreateFromString( value->valuestring,
+                                                     pVarInfo->var.type,
+                                                     &pVarInfo->var,
+                                                     0 );
             }
         }
     }
