@@ -250,13 +250,10 @@ int VARCREATE_CreateFromString( VARSERVER_HANDLE hVarServer,
     if( vardata != NULL )
     {
         /* process the variable data */
-        varcreate_fnProcessVarData( hVarServer, vardata, options );
+        result = varcreate_fnProcessVarData( hVarServer, vardata, options );
 
         /* delete the vardata JSON object now that we are done with it */
         cJSON_Delete( vardata );
-
-        /* indicate success */
-        result = EOK;
     }
     else
     {
@@ -492,6 +489,10 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
             {
                 printf("Failed to create variable: %s\n", variableInfo.name );
             }
+        }
+        else if ( variableInfo.name != NULL )
+        {
+            printf("Failed to create variable: %s\n", variableInfo.name );
         }
     }
 
