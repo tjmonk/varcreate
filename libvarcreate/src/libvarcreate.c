@@ -444,6 +444,7 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
                 {
                     printf( "Value too large for variable: %s\n",
                             variableInfo.name );
+                    result = E2BIG;
                 }
             }
         }
