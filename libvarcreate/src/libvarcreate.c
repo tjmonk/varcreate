@@ -491,8 +491,8 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
                 printf("Failed to create variable: %s\n", variableInfo.name );
             }
         }
-        else if ( variableInfo.name != NULL )
-        {
+        else
+	{
             printf("Failed to create variable: %s\n", variableInfo.name );
         }
     }
