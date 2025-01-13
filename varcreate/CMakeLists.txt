@@ -9,8 +9,6 @@ project(varcreate-bin
 
 find_package( Threads REQUIRED )
 
-find_library( LIB_RT rt REQUIRED )
-
 add_executable( ${PROJECT_NAME}
 	src/varcreate.c
 )
@@ -22,7 +20,6 @@ target_include_directories( ${PROJECT_NAME}
 target_link_libraries( ${PROJECT_NAME}
 	varserver
 	varcreate
-	${LIB_RT}
 )
 
 set_target_properties( ${PROJECT_NAME}
