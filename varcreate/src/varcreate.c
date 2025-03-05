@@ -91,6 +91,9 @@ typedef struct _State
     /*! name represents a directory name */
     bool directory;
 
+    /*! force default value even if the variable already exists */
+    bool forceDefault;
+
 } State;
 
 /*==============================================================================
@@ -142,6 +145,7 @@ int main(int argc, char **argv)
         options.prefix = state.prefix;
         options.instanceID = state.instanceID;
         options.verbose = state.verbose;
+        options.forceDefault = state.forceDefault;
 
         if ( state.flags != NULL )
         {
@@ -209,6 +213,8 @@ int main(int argc, char **argv)
 
     -d : create from multiple files in a directory
 
+    -z : force default value even if the variable already exists
+
     @param[in]
         argc
             number of arguments on the command line
@@ -236,7 +242,7 @@ static int ProcessOptions( int argc, char *argv[], State *pState )
 
     if( ( argc >= 2 ) && ( pState != NULL ) )
     {
-        while( ( c = getopt( argc, argv, "vp:i:f:d") ) != -1 )
+        while( ( c = getopt( argc, argv, "vp:i:f:dz") ) != -1 )
         {
             switch( c )
             {
@@ -258,6 +264,10 @@ static int ProcessOptions( int argc, char *argv[], State *pState )
 
                 case 'd':
                     pState->directory = true;
+                    break;
+
+                case 'z':
+                    pState->forceDefault = true;
                     break;
 
                 default:
