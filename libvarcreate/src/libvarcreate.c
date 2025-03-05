@@ -489,6 +489,19 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
             else
             {
                 printf("Failed to create variable: %s\n", variableInfo.name );
+
+                /* force a default value if the variable already exists */
+                if ( options->forceDefault )
+                {
+                    result = VAR_Set( hVarServer,
+                                        VAR_FindByName( hVarServer, variableInfo.name ),
+                                        &variableInfo.var );
+                    if ( result != EOK )
+                    {
+                        printf("Failed to set default value for existing variable: %s\n",
+                                variableInfo.name );
+                    }
+                }
             }
         }
         else
