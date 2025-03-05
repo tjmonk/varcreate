@@ -109,6 +109,7 @@ static int CreateFromDirectory( State *pState,
                                 char *dirname,
                                 VarCreateOptions *pOptions );
 static char *CreateFullPath( char *dirname, char *filename );
+static void usage( char *name );
 
 /*==============================================================================
         Public function definitions
@@ -194,6 +195,34 @@ int main(int argc, char **argv)
 }
 
 /*============================================================================*/
+/*  usage                                                                     */
+/*!
+    Display the usage information
+
+    The usage function describes the command line options on the
+    standard output stream.
+
+    @param[in]
+        name
+            pointer to the application name
+
+==============================================================================*/
+static void usage( char *name )
+{
+    if( name != NULL )
+    {
+        printf("usage: %s [-h] [-v] [-i <instance>] [-p <prefix>] [-f <flags>] [-d] [-z] <filename>\n", name );
+        printf("-h : display this help\n");
+        printf("-v : enable verbose (debugging) output\n");
+        printf("-i : apply an instance identifier to the variables\n");
+        printf("-p : apply a variable name prefix to the variables\n");
+        printf("-f : apply flags to the variables\n");
+        printf("-d : create from multiple files in a directory\n");
+        printf("-z : force default value even if the variable already exists\n");
+    }
+}
+
+/*============================================================================*/
 /*  ProcessOptions                                                            */
 /*!
     Process the command line options for the varcreate utility
@@ -242,10 +271,14 @@ static int ProcessOptions( int argc, char *argv[], State *pState )
 
     if( ( argc >= 2 ) && ( pState != NULL ) )
     {
-        while( ( c = getopt( argc, argv, "vp:i:f:dz") ) != -1 )
+        while( ( c = getopt( argc, argv, "hvp:i:f:dz") ) != -1 )
         {
             switch( c )
             {
+                case 'h':
+                    usage( argv[0] );
+                    break;
+
                 case 'v':
                     pState->verbose = true;
                     break;
