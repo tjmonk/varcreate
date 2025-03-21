@@ -57,6 +57,7 @@ SOFTWARE.
 #include <sys/stat.h>
 #include <unistd.h>
 #include <varserver/var.h>
+#include <varserver/varserver.h>
 #include "cJSON.h"
 #include <varcreate/libvarcreate.h>
 
@@ -213,8 +214,8 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
     return result;
 }
 
-/*==========================================================================*/
-/*  VARCREATE_CreateFromString                                              */
+/*============================================================================*/
+/*  VARCREATE_CreateFromString                                                */
 /*!
     Create variables from a string containing JSON configuration
 
@@ -237,7 +238,7 @@ int VARCREATE_CreateFromFile( VARSERVER_HANDLE hVarServer,
     @retval EOK - variable creation was successful
     @retval EINVAL - invalid arguments
 
-============================================================================*/
+==============================================================================*/
 int VARCREATE_CreateFromString( VARSERVER_HANDLE hVarServer,
                                 const char *filedata,
                                 VarCreateOptions *options )
@@ -377,6 +378,7 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
     int result = EINVAL;
     char buf[MAX_NAME_LEN+1];
     size_t len;
+    VAR_HANDLE hVar;
 
     JSONHandler handlers[] =
         {
@@ -488,25 +490,29 @@ static int varcreate_fnProcessVar( VARSERVER_HANDLE hVarServer,
             }
             else
             {
-                printf("Failed to create variable: %s\n", variableInfo.name );
-
                 /* force a default value if the variable already exists */
                 if ( options->forceDefault )
                 {
-                    result = VAR_Set( hVarServer,
-                                        VAR_FindByName( hVarServer, variableInfo.name ),
-                                        &variableInfo.var );
-                    if ( result != EOK )
+                    hVar = VAR_FindByName( hVarServer, variableInfo.name );
+                    if ( hVar != VAR_INVALID )
                     {
-                        printf("Failed to set default value for existing variable: %s\n",
-                                variableInfo.name );
+                        result = VAR_Set( hVarServer,
+                                          hVar,
+                                          &variableInfo.var );
                     }
                 }
             }
+
+            if ( result != EOK )
+            {
+                printf( "Failed to create/update variable: %s\n",
+                        variableInfo.name );
+
+            }
         }
         else
-	{
-            printf("Failed to create variable: %s\n", variableInfo.name );
+	    {
+            printf( "Failed to create variable: %s\n", variableInfo.name );
         }
     }
 

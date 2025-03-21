@@ -211,14 +211,15 @@ static void usage( char *name )
 {
     if( name != NULL )
     {
-        printf("usage: %s [-h] [-v] [-i <instance>] [-p <prefix>] [-f <flags>] [-d] [-z] <filename>\n", name );
+        printf("usage: %s [-h] [-v] [-i <instance>] [-p <prefix>] ", name );
+        printf("[-f <flags>] [-d] [-z] <filename>\n");
         printf("-h : display this help\n");
         printf("-v : enable verbose (debugging) output\n");
         printf("-i : apply an instance identifier to the variables\n");
         printf("-p : apply a variable name prefix to the variables\n");
         printf("-f : apply flags to the variables\n");
         printf("-d : create from multiple files in a directory\n");
-        printf("-z : force default value even if the variable already exists\n");
+        printf("-z : force default value if the variable already exists\n");
     }
 }
 
