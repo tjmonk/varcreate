@@ -62,6 +62,9 @@ typedef struct _VarCreateOptions
     /*! enable verbose logging */
     bool verbose;
 
+    /*! force default value even if the variable already exists */
+    bool forceDefault;
+
 } VarCreateOptions;
 
 /*============================================================================
